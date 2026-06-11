@@ -1,19 +1,19 @@
 {
   "name": "crypto-wallet-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Telegram bot for monitoring crypto wallet activities",
+  "main": "api/webhook.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/webhook.js",
+    "dev": "nodemon api/webhook.js",
+    "vercel-build": "npm install"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "axios": "^1.17.0",
-    "dotenv": "^17.4.2",
-    "mongoose": "^9.7.0",
-    "node-telegram-bot-api": "^0.67.0"
+    "dotenv": "^16.3.1",
+    "mongoose": "^8.0.3",
+    "telegraf": "^4.15.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
