@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet Monitor</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 16px;
+            background: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+        }
+        .wallet-card {
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        button {
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="wallet-card">
+            <h2>💰 Total Portfolio</h2>
+            <div class="balance" id="totalBalance">Loading...</div>
+        </div>
+        
+        <div id="walletsList"></div>
+        
+        <button onclick="addWallet()">➕ Add New Wallet</button>
+        <button onclick="refreshData()">🔄 Refresh</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand(); // Expand to full screen
+        
+        async function loadWallets() {
+            // Fetch data from your backend
+            const response = await fetch('/api/wallets');
+            const wallets = await response.json();
+            
+            const container = document.getElementById('walletsList');
+            container.innerHTML = wallets.map(w => `
+                <div class="wallet-card">
+                    <strong>${w.label || w.address.slice(0, 10)}...</strong><br>
+                    Chain: ${w.chain}<br>
+                    Balance: ${w.balance} ${w.symbol}
+                </div>
+            `).join('');
+            
+            // Update total balance
+            const total = wallets.reduce((sum, w) => sum + parseFloat(w.balance), 0);
+            document.getElementById('totalBalance').innerText = `$${total.toFixed(2)}`;
+        }
+        
+        function addWallet() {
+            tg.showPopup({
+                title: 'Add Wallet',
+                message: 'Enter wallet address:',
+                buttons: [{type: 'default', text: 'OK'}]
+            }, (buttonId) => {
+                // Handle input
+            });
+        }
+        
+        function refreshData() {
+            loadWallets();
+            tg.HapticFeedback.impactOccurred('light');
+        }
+        
+        loadWallets();
+    </script>
+</body>
+</html>
